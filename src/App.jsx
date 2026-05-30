@@ -899,13 +899,13 @@ export default function App() {
                   </h2>
                   <p className="text-[10px] text-slate-400">Atur periode bulan & tahun untuk mengerucutkan grafik kompensasi divisi.</p>
                 </div>
-                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
+                  <div className="flex-1 min-w-[180px] flex items-center gap-2">
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider font-mono">Bulan:</span>
                     <select
                       value={dashMonth}
                       onChange={(e) => setDashMonth(e.target.value)}
-                      className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-200 focus:outline-none cursor-pointer hover:border-slate-700 transition"
+                      className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-200 focus:outline-none cursor-pointer hover:border-slate-700 transition w-full sm:w-auto"
                     >
                       <option value="ALL">Semua Bulan</option>
                       <option value="01">Januari</option>
@@ -923,12 +923,12 @@ export default function App() {
                     </select>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex-1 min-w-[180px] flex items-center gap-2">
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider font-mono">Tahun:</span>
                     <select
                       value={dashYear}
                       onChange={(e) => setDashYear(e.target.value)}
-                      className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-200 focus:outline-none cursor-pointer hover:border-slate-700 transition"
+                      className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-200 focus:outline-none cursor-pointer hover:border-slate-700 transition w-full sm:w-auto"
                     >
                       <option value="ALL">Semua Tahun</option>
                       {availableYears.map(yr => (
