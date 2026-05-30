@@ -482,6 +482,8 @@ export default function App() {
     
     const totalDuration = approvedOrPaidFiltered.reduce((sum, item) => sum + Number(item.durasiLembur || 0), 0);
     const totalNominal = approvedOrPaidFiltered.reduce((sum, item) => sum + Number(item.nominal || 0), 0);
+    const approvedCount = approvedOrPaidFiltered.length;
+    const averageDurationPerDoc = approvedCount ? Number((totalDuration / approvedCount).toFixed(1)) : 0;
     
     // Status global (selalu update semua periode sebagai alarm aksi bagi manager)
     const pendingCount = overtime.filter(item => item.statusDocument === 'pending').length;
@@ -550,6 +552,8 @@ export default function App() {
     return {
       totalDuration: Number(totalDuration.toFixed(1)),
       totalNominal,
+      approvedCount,
+      averageDurationPerDoc,
       pendingCount,
       revisionCount,
       trendData,
@@ -867,7 +871,26 @@ export default function App() {
                 </div>
               )}
 
-              {}
+              <div className="bg-slate-950 border border-slate-800 rounded-[2rem] p-6 shadow-2xl shadow-slate-950/40 ring-1 ring-slate-800/70">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                  <div className="space-y-3 max-w-3xl">
+                    <p className="text-xs uppercase tracking-[0.35em] text-slate-400 font-semibold">Dashboard Overtime</p>
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-white">Ringkasan Kinerja dan Biaya Lembur</h1>
+                    <p className="text-sm text-slate-400 leading-6">Lihat performa lembur, status dokumen, dan distribusi biaya secara real time dengan filter bulan dan tahun.</p>
+                  </div>
+                  <div className="flex flex-col items-start gap-3 sm:items-end">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-slate-900/80 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-300">
+                      <Sparkles className="h-4 w-4 text-amber-400" />
+                      {dashMonth === 'ALL' ? 'Semua Bulan' : ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][Number(dashMonth) - 1]} • {dashYear === 'ALL' ? 'Semua Tahun' : dashYear}
+                    </div>
+                    <div className="flex flex-wrap gap-2 justify-start sm:justify-end">
+                      <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-[11px] font-semibold text-emerald-300">{stats.approvedCount} Disetujui</span>
+                      <span className="rounded-full bg-amber-500/10 border border-amber-500/20 px-3 py-1 text-[11px] font-semibold text-amber-300">{stats.pendingCount} Menunggu</span>
+                      <span className="rounded-full bg-rose-500/10 border border-rose-500/20 px-3 py-1 text-[11px] font-semibold text-rose-300">{stats.revisionCount} Revisi</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
               {/* Dashboard Global Filter Panel */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-950 border border-slate-800 p-4 rounded-2xl shadow-lg">
                 <div>
@@ -916,49 +939,61 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-slate-950 border border-slate-800 p-5 rounded-2xl flex items-center space-x-4">
-                  <div className="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl">
-                    <Calendar className="h-6 w-6" />
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                <div className="bg-slate-950 border border-slate-800 p-6 rounded-3xl shadow-xl shadow-slate-950/20 ring-1 ring-slate-800/60">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-3 bg-indigo-500/10 text-indigo-300 rounded-2xl">
+                      <Calendar className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-semibold">Total Jam</p>
+                      <p className="text-xs text-slate-400">Disetujui & Lunas</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block font-mono">Total Jam Lembur</span>
-                    <h3 className="text-lg font-black text-white">{stats.totalDuration} Jam</h3>
-                    <p className="text-[10px] text-emerald-400 mt-0.5 font-bold">Disetujui & Lunas</p>
-                  </div>
+                  <h3 className="text-3xl font-black text-white">{stats.totalDuration}</h3>
+                  <p className="mt-2 text-sm text-slate-400">Total jam lembur yang sudah diverifikasi.</p>
                 </div>
 
-                <div className="bg-slate-950 border border-slate-800 p-5 rounded-2xl flex items-center space-x-4">
-                  <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl">
-                    <Coins className="h-6 w-6" />
+                <div className="bg-slate-950 border border-slate-800 p-6 rounded-3xl shadow-xl shadow-slate-950/20 ring-1 ring-slate-800/60">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-3 bg-emerald-500/10 text-emerald-300 rounded-2xl">
+                      <Coins className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-semibold">Nominal Kompensasi</p>
+                      <p className="text-xs text-slate-400">Anggaran lembur saat ini</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider font-mono">Nominal Kompensasi</span>
-                    <h3 className="text-lg font-black text-white">Rp. {stats.totalNominal.toLocaleString('id-ID')}</h3>
-                    <p className="text-[10px] text-emerald-400 mt-0.5 font-bold">Total Pengeluaran</p>
-                  </div>
+                  <h3 className="text-3xl font-black text-white">Rp. {stats.totalNominal.toLocaleString('id-ID')}</h3>
+                  <p className="mt-2 text-sm text-slate-400">Total pengeluaran kompensasi.</p>
                 </div>
 
-                <div className="bg-slate-950 border border-slate-800 p-5 rounded-2xl flex items-center space-x-4">
-                  <div className="p-3 bg-amber-500/10 text-amber-400 rounded-xl">
-                    <Info className="h-6 w-6" />
+                <div className="bg-slate-950 border border-slate-800 p-6 rounded-3xl shadow-xl shadow-slate-950/20 ring-1 ring-slate-800/60">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-3 bg-slate-700/40 text-slate-200 rounded-2xl">
+                      <FileText className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-semibold">Dokumen Disetujui</p>
+                      <p className="text-xs text-slate-400">Lembar pengajuan selesai</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider font-mono">Menunggu Verifikasi</span>
-                    <h3 className="text-lg font-black text-white">{stats.pendingCount} Dokumen</h3>
-                    <p className="text-[10px] text-amber-400 mt-0.5 font-bold">Butuh Keputusan</p>
-                  </div>
+                  <h3 className="text-3xl font-black text-white">{stats.approvedCount}</h3>
+                  <p className="mt-2 text-sm text-slate-400">Jumlah dokumen yang sudah diverifikasi.</p>
                 </div>
 
-                <div className="bg-slate-950 border border-slate-800 p-5 rounded-2xl flex items-center space-x-4">
-                  <div className="p-3 bg-rose-500/10 text-rose-400 rounded-xl">
-                    <ShieldAlert className="h-6 w-6" />
+                <div className="bg-slate-950 border border-slate-800 p-6 rounded-3xl shadow-xl shadow-slate-950/20 ring-1 ring-slate-800/60">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-3 bg-slate-700/40 text-slate-200 rounded-2xl">
+                      <Activity className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-semibold">Rata-rata Jam</p>
+                      <p className="text-xs text-slate-400">Per dokumen disetujui</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider font-mono">Perlu Koreksi</span>
-                    <h3 className="text-lg font-black text-white">{stats.revisionCount} Kasus</h3>
-                    <p className="text-[10px] text-rose-400 mt-0.5 font-bold font-mono">Perlu Tindak Lanjut</p>
-                  </div>
+                  <h3 className="text-3xl font-black text-white">{stats.averageDurationPerDoc.toFixed(1)}</h3>
+                  <p className="mt-2 text-sm text-slate-400">Jam lembur rata-rata per dokumen.</p>
                 </div>
               </div>
 
