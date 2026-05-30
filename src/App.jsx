@@ -950,7 +950,7 @@ export default function App() {
                       <p className="text-xs text-slate-400">Disetujui & Lunas</p>
                     </div>
                   </div>
-                  <h3 className="text-3xl font-black text-white">{stats.totalDuration}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-white break-words">{stats.totalDuration}</h3>
                   <p className="mt-2 text-sm text-slate-400">Total jam lembur yang sudah diverifikasi.</p>
                 </div>
 
@@ -964,7 +964,7 @@ export default function App() {
                       <p className="text-xs text-slate-400">Anggaran lembur saat ini</p>
                     </div>
                   </div>
-                  <h3 className="text-3xl font-black text-white">Rp. {stats.totalNominal.toLocaleString('id-ID')}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-white break-words">Rp. {stats.totalNominal.toLocaleString('id-ID')}</h3>
                   <p className="mt-2 text-sm text-slate-400">Total pengeluaran kompensasi.</p>
                 </div>
 
@@ -978,7 +978,7 @@ export default function App() {
                       <p className="text-xs text-slate-400">Lembar pengajuan selesai</p>
                     </div>
                   </div>
-                  <h3 className="text-3xl font-black text-white">{stats.approvedCount}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-white break-words">{stats.approvedCount}</h3>
                   <p className="mt-2 text-sm text-slate-400">Jumlah dokumen yang sudah diverifikasi.</p>
                 </div>
 
@@ -992,7 +992,7 @@ export default function App() {
                       <p className="text-xs text-slate-400">Per dokumen disetujui</p>
                     </div>
                   </div>
-                  <h3 className="text-3xl font-black text-white">{stats.averageDurationPerDoc.toFixed(1)}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-white break-words">{stats.averageDurationPerDoc.toFixed(1)}</h3>
                   <p className="mt-2 text-sm text-slate-400">Jam lembur rata-rata per dokumen.</p>
                 </div>
               </div>
