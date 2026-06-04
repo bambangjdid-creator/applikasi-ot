@@ -65,9 +65,9 @@ export default function Dashboard({
         </div>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
+      <section className="grid gap-5 xl:grid-cols-[1fr_320px]">
         <div className="space-y-5">
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
             <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[140px]">
               <div className="flex items-start justify-between gap-3 w-full">
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Total Jam Lembur</p>
@@ -114,7 +114,7 @@ export default function Dashboard({
             </div>
           </div>
 
-          <div className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+          <div className="grid gap-5 grid-cols-1 lg:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
             <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-xl shadow-slate-950/10">
               <div className="mb-4 flex items-center justify-between gap-5">
                 <div>
