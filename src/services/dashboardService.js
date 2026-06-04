@@ -73,13 +73,34 @@ export const getDashboardStats = (overtimeList, month, year) => {
 
   const topTypes = Object.values(typeMap).sort((a, b) => b.value - a.value).slice(0, 5);
 
-  const dailyChartData = Array.from({ length: 5 }, (_, index) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (4 - index));
-    const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  const uniqueDates = Array.from(new Set(filtered.map((item) => item.tanggalLembur)))
+    .filter(Boolean)
+    .sort((a, b) => new Date(a) - new Date(b));
+
+  let lastDates = [];
+  if (uniqueDates.length >= 5) {
+    lastDates = uniqueDates.slice(-5);
+  } else {
+    const earliestDateStr = uniqueDates[0] || new Date().toISOString().substring(0, 10);
+    const earliestDate = new Date(earliestDateStr);
+    const datesNeeded = 5 - uniqueDates.length;
+    const paddedDates = [];
+    for (let i = datesNeeded; i > 0; i--) {
+      const padDate = new Date(earliestDate);
+      padDate.setDate(earliestDate.getDate() - i);
+      paddedDates.push(padDate.toISOString().substring(0, 10));
+    }
+    lastDates = [...paddedDates, ...uniqueDates];
+  }
+
+  const dailyChartData = lastDates.map((dateStr) => {
+    const dateObj = new Date(dateStr);
+    const label = !Number.isNaN(dateObj.getTime())
+      ? `${dateObj.getDate()}/${dateObj.getMonth() + 1}`
+      : dateStr;
     return {
-      name: `${date.getDate()}/${date.getMonth() + 1}`,
-      durasi: filtered.filter((item) => item.tanggalLembur === dateString).reduce((sum, item) => sum + Number(item.durasiLembur || 0), 0)
+      name: label,
+      durasi: filtered.filter((item) => item.tanggalLembur === dateStr).reduce((sum, item) => sum + Number(item.durasiLembur || 0), 0)
     };
   });
 

@@ -68,7 +68,7 @@ export default function Dashboard({
       <section className="grid gap-5 xl:grid-cols-[1fr_320px]">
         <div className="space-y-5">
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[140px]">
+            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-4 sm:p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[120px]">
               <div className="flex items-start justify-between gap-3 w-full">
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Total Jam Lembur</p>
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-cyan-300 shadow-lg shadow-cyan-400/5">
@@ -76,10 +76,10 @@ export default function Dashboard({
                 </div>
               </div>
               <div className="mt-3">
-                <p className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-100 tracking-tight break-words">{stats.totalDurasi.toFixed(1)} jam</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-black text-slate-100 tracking-tight whitespace-nowrap">{stats.totalDurasi.toFixed(1)} jam</p>
               </div>
             </div>
-            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[140px]">
+            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-4 sm:p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[120px]">
               <div className="flex items-start justify-between gap-3 w-full">
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Estimasi Total Bayar</p>
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-emerald-300 shadow-lg shadow-emerald-400/5">
@@ -87,10 +87,10 @@ export default function Dashboard({
                 </div>
               </div>
               <div className="mt-3">
-                <p className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-100 tracking-tight break-words">Rp {stats.totalNominal.toLocaleString('id-ID')}</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-black text-slate-100 tracking-tight whitespace-nowrap">Rp {stats.totalNominal.toLocaleString('id-ID')}</p>
               </div>
             </div>
-            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[140px]">
+            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-4 sm:p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[120px]">
               <div className="flex items-start justify-between gap-3 w-full">
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Status Approved</p>
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-lime-300 shadow-lg shadow-lime-400/5">
@@ -98,10 +98,10 @@ export default function Dashboard({
                 </div>
               </div>
               <div className="mt-3">
-                <p className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-100 tracking-tight break-words">{stats.approvedCount}</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-black text-slate-100 tracking-tight whitespace-nowrap">{stats.approvedCount}</p>
               </div>
             </div>
-            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[140px]">
+            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-4 sm:p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[120px]">
               <div className="flex items-start justify-between gap-3 w-full">
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Rata-rata Durasi</p>
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-amber-300 shadow-lg shadow-amber-400/5">
@@ -109,7 +109,7 @@ export default function Dashboard({
                 </div>
               </div>
               <div className="mt-3">
-                <p className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-100 tracking-tight break-words">{stats.averageDurationPerDoc.toFixed(1)} jam</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-black text-slate-100 tracking-tight whitespace-nowrap">{stats.averageDurationPerDoc.toFixed(1)} jam</p>
               </div>
             </div>
           </div>
@@ -124,7 +124,7 @@ export default function Dashboard({
                 <div className="rounded-full bg-slate-800/70 px-4 py-2 text-xs uppercase tracking-[0.28em] text-slate-300">Riwayat Ringkas</div>
               </div>
               <div className="h-[320px]">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height={280}>
                   <LineChart data={stats.dailyChartData} margin={{ top: 5, right: 0, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                     <XAxis dataKey="name" stroke="#94a3b8" tick={{ fontSize: 12 }} />
@@ -143,7 +143,7 @@ export default function Dashboard({
                 <p className="mt-1 text-sm text-slate-400">Proyeksi jenis lembur berdasarkan durasi.</p>
               </div>
               <div className="h-[320px]">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height={280}>
                   <PieChart>
                     <Pie
                       data={stats.pieChartData}
