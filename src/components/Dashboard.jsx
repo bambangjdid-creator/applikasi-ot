@@ -68,48 +68,48 @@ export default function Dashboard({
       <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
         <div className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-2xl shadow-slate-950/10">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm text-slate-400">Total Jam Lembur</p>
-                  <p className="mt-3 text-3xl font-semibold text-slate-100">{stats.totalDurasi.toFixed(1)} jam</p>
-                </div>
-                <div className="grid h-12 w-12 place-items-center rounded-3xl bg-slate-800/70 text-cyan-300 shadow-lg shadow-cyan-400/5">
+            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[140px]">
+              <div className="flex items-start justify-between gap-3 w-full">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Total Jam Lembur</p>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-cyan-300 shadow-lg shadow-cyan-400/5">
                   <Sparkles className="h-5 w-5" />
                 </div>
               </div>
+              <div className="mt-3">
+                <p className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-100 tracking-tight break-words">{stats.totalDurasi.toFixed(1)} jam</p>
+              </div>
             </div>
-            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-2xl shadow-slate-950/10">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm text-slate-400">Estimasi Total Bayar</p>
-                  <p className="mt-3 text-3xl font-semibold text-slate-100">Rp {stats.totalNominal.toLocaleString('id-ID')}</p>
-                </div>
-                <div className="grid h-12 w-12 place-items-center rounded-3xl bg-slate-800/70 text-emerald-300 shadow-lg shadow-emerald-400/5">
+            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[140px]">
+              <div className="flex items-start justify-between gap-3 w-full">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Estimasi Total Bayar</p>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-emerald-300 shadow-lg shadow-emerald-400/5">
                   <Coins className="h-5 w-5" />
                 </div>
               </div>
+              <div className="mt-3">
+                <p className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-100 tracking-tight break-words">Rp {stats.totalNominal.toLocaleString('id-ID')}</p>
+              </div>
             </div>
-            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-2xl shadow-slate-950/10">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm text-slate-400">Status Approved</p>
-                  <p className="mt-3 text-3xl font-semibold text-slate-100">{stats.approvedCount}</p>
-                </div>
-                <div className="grid h-12 w-12 place-items-center rounded-3xl bg-slate-800/70 text-lime-300 shadow-lg shadow-lime-400/5">
+            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[140px]">
+              <div className="flex items-start justify-between gap-3 w-full">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Status Approved</p>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-lime-300 shadow-lg shadow-lime-400/5">
                   <UserCheck className="h-5 w-5" />
                 </div>
               </div>
+              <div className="mt-3">
+                <p className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-100 tracking-tight break-words">{stats.approvedCount}</p>
+              </div>
             </div>
-            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-2xl shadow-slate-950/10">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm text-slate-400">Rata-rata Durasi</p>
-                  <p className="mt-3 text-3xl font-semibold text-slate-100">{stats.averageDurationPerDoc.toFixed(1)} jam</p>
-                </div>
-                <div className="grid h-12 w-12 place-items-center rounded-3xl bg-slate-800/70 text-amber-300 shadow-lg shadow-amber-400/5">
+            <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[140px]">
+              <div className="flex items-start justify-between gap-3 w-full">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Rata-rata Durasi</p>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-amber-300 shadow-lg shadow-amber-400/5">
                   <Info className="h-5 w-5" />
                 </div>
+              </div>
+              <div className="mt-3">
+                <p className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-100 tracking-tight break-words">{stats.averageDurationPerDoc.toFixed(1)} jam</p>
               </div>
             </div>
           </div>
