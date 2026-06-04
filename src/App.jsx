@@ -659,6 +659,34 @@ export default function App() {
                 );
               })}
             </nav>
+
+            <div className="border-t border-slate-800/80 pt-4 space-y-3 text-left">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Kunci Data (Sheets)</span>
+                <Database className="h-4 w-4 text-cyan-400" />
+              </div>
+              <p className="text-[10px] text-slate-500 leading-relaxed">
+                Penyimpanan data cloud aktif melalui Google Sheets.
+              </p>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setCurrentTab('Settings')}
+                  className="flex-1 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-[10px] font-bold py-2 rounded-lg text-slate-300 transition-all text-center"
+                >
+                  Setting
+                </button>
+                {gasUrl && (
+                  <a 
+                    href={gasUrl} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="flex-1 bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-[10px] font-black py-2 rounded-lg transition-all text-center"
+                  >
+                    Buka Sheet
+                  </a>
+                )}
+              </div>
+            </div>
           </div>
         </aside>
 
