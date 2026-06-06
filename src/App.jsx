@@ -261,34 +261,38 @@ export default function App() {
     setSyncProgressMsg(`Menyimpan perubahan (${action}) ke Google Sheets...`);
 
     try {
-      await fetch(gasUrl, {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          action: action,
-          payload: payload,
-          currentUser: currentUser
-        })
-      });
-
-      setSyncStatus('success');
-      showToast('Database berhasil diposting ke Cloud!');
-      setTimeout(() => {
-        setSyncStatus('idle');
-        pullDataFromGoogleSheets(true);
-      }, 1500);
-
-      if (successCallback) successCallback();
-    } catch (error) {
-      console.error(error);
-      setSyncStatus('error');
-      showToast('Gagal mengirim update ke Google Sheets Webhook!', 'error');
-      setTimeout(() => setSyncStatus('idle'), 2000);
-    }
+      try {
+        const response = await fetch(gasUrl, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            action: action,
+            payload: payload,
+            currentUser: currentUser
+          })
+        });
+        const result = await response.json();
+        if (result.success) {
+          setSyncStatus('success');
+          showToast('Database berhasil diposting ke Cloud!');
+          setTimeout(() => {
+            setSyncStatus('idle');
+            pullDataFromGoogleSheets(true);
+          }, 1500);
+          if (successCallback) successCallback();
+        } else {
+          throw new Error(result.message || 'Unknown error');
+        }
+      } catch (error) {
+        console.error(error);
+        setSyncStatus('error');
+        showToast(`Gagal mengirim update ke Google Sheets Webhook: ${error.message}`, 'error');
+        setTimeout(() => setSyncStatus('idle'), 2000);
+      }}
   };
 
   useEffect(() => {
