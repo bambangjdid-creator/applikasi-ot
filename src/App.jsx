@@ -414,29 +414,35 @@ export default function App() {
     }
   };
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    if (!loginUsername.trim() || !loginPassword.trim()) {
-      showToast('Wajib memasukkan nama pengguna dan sandi!', 'error');
-      return;
-    }
+const handleLogin = async (e) => {
+  e.preventDefault();
+  if (!loginUsername.trim() || !loginPassword.trim()) {
+    showToast('Wajib memasukkan nama pengguna dan sandi!', 'error');
+    return;
+  }
 
-    if (gasUrl && !remoteDataSynced) {
-      await pullDataFromGoogleSheets(true);
-    }
+  // Always fetch latest user data from Google Sheets before authentication
+  console.log('Attempting login for', loginUsername.trim());
+  await pullDataFromGoogleSheets(true);
+  // Retrieve refreshed users from localStorage (since pull updates it)
+  const refreshed = localStorage.getItem('ot_users_role');
+  const refreshedUsers = refreshed ? JSON.parse(refreshed).map(normalizeUser) : [];
+  const matchedUser = refreshedUsers.find(
+    u => u.username.toLowerCase() === loginUsername.trim().toLowerCase() && u.password === loginPassword
+  );
 
-    const matchedUser = users.find(
-      u => u.username.toLowerCase() === loginUsername.trim().toLowerCase() && u.password === loginPassword
-    );
-
-    if (matchedUser) {
-      setCurrentUser(matchedUser);
-      writeLocalLog(matchedUser, 'login', `User ${matchedUser.displayName} berhasil login.`);
-      showToast(`Selamat datang kembali, ${matchedUser.displayName}!`, 'success');
-    } else {
-      showToast('Kombinasi nama pengguna atau kata sandi keliru!', 'error');
-    }
-  };
+  if (matchedUser) {
+    setCurrentUser(matchedUser);
+    writeLocalLog(matchedUser, 'login', `User ${matchedUser.displayName} berhasil login.`);
+    showToast(`Selamat datang kembali, ${matchedUser.displayName}!`, 'success');
+    console.log('Login success for', matchedUser.username);
+    // Update users state with refreshed list
+    setUsers(refreshedUsers);
+  } else {
+    showToast('Kombinasi nama pengguna atau kata sandi keliru!', 'error');
+    console.warn('Login failed for', loginUsername.trim());
+  }
+};
 
   const handleLogout = () => {
     writeLocalLog(currentUser, 'logout', 'User keluar dari sistem.');

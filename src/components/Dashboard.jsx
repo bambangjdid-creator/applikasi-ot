@@ -36,15 +36,15 @@ export default function Dashboard({
     <div className="space-y-6">
       {/* 1. Header & Filters Banner */}
       <section className="text-left rounded-3xl bg-blue-950/90 p-6 text-slate-100 shadow-xl shadow-slate-950/20 ring-1 ring-slate-700/25">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-6">
           <div>
             <p className="text-sm uppercase tracking-[0.35em] text-cyan-300/80">Dashboard Ringkas</p>
             <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">Laporan Lembur Bulanan</h1>
-            <p className="mt-2 max-w-2xl text-sm text-slate-300/90 sm:text-base">
+            <p className="mt-2 text-sm text-slate-300/90 sm:text-base">
               Ringkasan performa lembur, status persetujuan, dan laporan keuangan berdasarkan bulan dan tahun terpilih.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-4 w-full lg:w-[420px] shrink-0">
+          <div className="grid grid-cols-2 gap-4 w-full sm:w-[420px] shrink-0">
             <div className="rounded-3xl border border-slate-800/70 bg-slate-950/80 p-4 shadow-xl shadow-slate-950/15">
               <p className="text-xs uppercase tracking-[0.34em] text-slate-500">Filter Bulan</p>
               <select
@@ -107,124 +107,121 @@ export default function Dashboard({
         </div>
       </section>
 
-      {/* 3. Main Split Section: left (metrics cards) & right (stacked charts) */}
-      <section className="grid gap-5 grid-cols-1 lg:grid-cols-2 text-left">
-        {/* Left Column: Summary Metrics Cards */}
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 h-fit">
-          <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-4 sm:p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[120px]">
-            <div className="flex items-start justify-between gap-3 w-full">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Total Jam Lembur</p>
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-cyan-300 shadow-lg shadow-cyan-400/5">
-                <Sparkles className="h-5 w-5" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <p className="text-lg sm:text-xl lg:text-2xl font-black text-slate-100 tracking-tight whitespace-nowrap">
-                {stats.totalDurasi.toFixed(1)} jam
-              </p>
+      {/* 3. Summary Metrics Cards (2x2 Grid) */}
+      <section className="grid gap-4 grid-cols-1 sm:grid-cols-2 text-left">
+        <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-4 sm:p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[120px]">
+          <div className="flex items-start justify-between gap-3 w-full">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Total Jam Lembur</p>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-cyan-300 shadow-lg shadow-cyan-400/5">
+              <Sparkles className="h-5 w-5" />
             </div>
           </div>
-
-          <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-4 sm:p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[120px]">
-            <div className="flex items-start justify-between gap-3 w-full">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Estimasi Total Bayar</p>
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-emerald-300 shadow-lg shadow-emerald-400/5">
-                <Coins className="h-5 w-5" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <p className="text-lg sm:text-xl lg:text-2xl font-black text-slate-100 tracking-tight whitespace-nowrap">
-                Rp {stats.totalNominal.toLocaleString('id-ID')}
-              </p>
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-4 sm:p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[120px]">
-            <div className="flex items-start justify-between gap-3 w-full">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Status Approved</p>
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-lime-300 shadow-lg shadow-lime-400/5">
-                <UserCheck className="h-5 w-5" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <p className="text-lg sm:text-xl lg:text-2xl font-black text-slate-100 tracking-tight whitespace-nowrap font-sans">
-                {stats.approvedCount}
-              </p>
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-4 sm:p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[120px]">
-            <div className="flex items-start justify-between gap-3 w-full">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Rata-rata Durasi</p>
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-amber-300 shadow-lg shadow-amber-400/5">
-                <Info className="h-5 w-5" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <p className="text-lg sm:text-xl lg:text-2xl font-black text-slate-100 tracking-tight whitespace-nowrap">
-                {stats.averageDurationPerDoc.toFixed(1)} jam
-              </p>
-            </div>
+          <div className="mt-3">
+            <p className="text-lg sm:text-xl lg:text-2xl font-black text-slate-100 tracking-tight whitespace-nowrap">
+              {stats.totalDurasi.toFixed(1)} jam
+            </p>
           </div>
         </div>
 
-        {/* Right Column: Visual Charts Stacked Vertically */}
-        <div className="space-y-5">
-          <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-xl shadow-slate-950/10">
-            <div className="mb-4 flex items-center justify-between gap-5">
-              <div>
-                <h2 className="text-lg font-semibold text-slate-100">Grafik Durasi Lembur</h2>
-                <p className="mt-1 text-sm text-slate-400">Performa lembur 5 hari terakhir.</p>
-              </div>
-              <div className="rounded-full bg-slate-800/70 px-4 py-2 text-xs uppercase tracking-[0.28em] text-slate-300">
-                Riwayat Ringkas
-              </div>
-            </div>
-            <div className="h-[320px]">
-              <ResponsiveContainer width="100%" height={280}>
-                <LineChart data={stats.dailyChartData} margin={{ top: 5, right: 0, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis dataKey="name" stroke="#94a3b8" tick={{ fontSize: 12 }} />
-                  <YAxis stroke="#94a3b8" tick={{ fontSize: 12 }} />
-                  <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderRadius: '1rem', border: '1px solid #334155' }} />
-                  <Legend verticalAlign="top" align="right" wrapperStyle={{ paddingBottom: 10, color: '#cbd5e1' }} />
-                  <Line type="monotone" dataKey="durasi" stroke="#38bdf8" strokeWidth={4} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-                </LineChart>
-              </ResponsiveContainer>
+        <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-4 sm:p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[120px]">
+          <div className="flex items-start justify-between gap-3 w-full">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Estimasi Total Bayar</p>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-emerald-300 shadow-lg shadow-emerald-400/5">
+              <Coins className="h-5 w-5" />
             </div>
           </div>
+          <div className="mt-3">
+            <p className="text-lg sm:text-xl lg:text-2xl font-black text-slate-100 tracking-tight whitespace-nowrap">
+              Rp {stats.totalNominal.toLocaleString('id-ID')}
+            </p>
+          </div>
+        </div>
 
-          <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-xl shadow-slate-950/10">
-            <div className="mb-4">
-              <h2 className="text-lg font-semibold text-slate-100">Jenis Lembur Teratas</h2>
-              <p className="mt-1 text-sm text-slate-400">Proyeksi jenis lembur berdasarkan durasi.</p>
+        <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-4 sm:p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[120px]">
+          <div className="flex items-start justify-between gap-3 w-full">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Status Approved</p>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-lime-300 shadow-lg shadow-lime-400/5">
+              <UserCheck className="h-5 w-5" />
             </div>
-            <div className="h-[320px]">
-              <ResponsiveContainer width="100%" height={280}>
-                <PieChart>
-                  <Pie
-                    data={stats.pieChartData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    dataKey="value"
-                    nameKey="name"
-                    stroke="transparent"
-                  >
-                    {stats.pieChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} />
-                    ))}
-                  </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderRadius: '1rem', border: '1px solid #334155' }} />
-                  <Legend verticalAlign="bottom" align="center" wrapperStyle={{ color: '#cbd5e1' }} />
-                </PieChart>
-              </ResponsiveContainer>
+          </div>
+          <div className="mt-3">
+            <p className="text-lg sm:text-xl lg:text-2xl font-black text-slate-100 tracking-tight whitespace-nowrap font-sans">
+              {stats.approvedCount}
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-4 sm:p-5 shadow-2xl shadow-slate-950/10 flex flex-col justify-between min-h-[120px]">
+          <div className="flex items-start justify-between gap-3 w-full">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Rata-rata Durasi</p>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-800/70 text-amber-300 shadow-lg shadow-amber-400/5">
+              <Info className="h-5 w-5" />
             </div>
+          </div>
+          <div className="mt-3">
+            <p className="text-lg sm:text-xl lg:text-2xl font-black text-slate-100 tracking-tight whitespace-nowrap">
+              {stats.averageDurationPerDoc.toFixed(1)} jam
+            </p>
           </div>
         </div>
       </section>
 
-      {/* 4. Aktivitas Terakhir (Full Width) */}
+      {/* 4. Visual Charts Section (2x1 Grid under metric cards) */}
+      <section className="grid gap-5 grid-cols-1 lg:grid-cols-2 text-left">
+        <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-xl shadow-slate-950/10 min-w-0">
+          <div className="mb-4 flex items-center justify-between gap-5">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-100">Grafik Durasi Lembur</h2>
+              <p className="mt-1 text-sm text-slate-400">Performa lembur 5 hari terakhir.</p>
+            </div>
+            <div className="rounded-full bg-slate-800/70 px-4 py-2 text-xs uppercase tracking-[0.28em] text-slate-300">
+              Riwayat Ringkas
+            </div>
+          </div>
+          <div className="h-[320px]">
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart data={stats.dailyChartData} margin={{ top: 5, right: 0, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis dataKey="name" stroke="#94a3b8" tick={{ fontSize: 12 }} />
+                <YAxis stroke="#94a3b8" tick={{ fontSize: 12 }} />
+                <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderRadius: '1rem', border: '1px solid #334155' }} />
+                <Legend verticalAlign="top" align="right" wrapperStyle={{ paddingBottom: 10, color: '#cbd5e1' }} />
+                <Line type="monotone" dataKey="durasi" stroke="#38bdf8" strokeWidth={4} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-xl shadow-slate-950/10 min-w-0">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-slate-100">Jenis Lembur Teratas</h2>
+            <p className="mt-1 text-sm text-slate-400">Proyeksi jenis lembur berdasarkan durasi.</p>
+          </div>
+          <div className="h-[320px]">
+            <ResponsiveContainer width="100%" height={280}>
+              <PieChart>
+                <Pie
+                  data={stats.pieChartData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  dataKey="value"
+                  nameKey="name"
+                  stroke="transparent"
+                >
+                  {stats.pieChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </Pie>
+                <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderRadius: '1rem', border: '1px solid #334155' }} />
+                <Legend verticalAlign="bottom" align="center" wrapperStyle={{ color: '#cbd5e1' }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Aktivitas Terakhir (Full Width) */}
       <section className="text-left rounded-3xl border border-slate-800/70 bg-slate-950/85 p-5 shadow-xl shadow-slate-950/10">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -240,9 +237,9 @@ export default function Dashboard({
         </div>
         <div className="mt-5 grid gap-4">
           {stats.recentActivities.length > 0 ? (
-            stats.recentActivities.map((activity) => (
+            stats.recentActivities.map((activity, index) => (
               <div
-                key={activity.idDoc + activity.tanggalLembur}
+                key={`${activity.idDoc}-${activity.tanggalLembur}-${index}`}
                 className="rounded-3xl border border-slate-800/75 bg-slate-950/90 p-4 shadow-inner shadow-slate-950/5"
               >
                 <div className="flex items-start justify-between gap-4">
@@ -272,3 +269,4 @@ export default function Dashboard({
     </div>
   );
 }
+
