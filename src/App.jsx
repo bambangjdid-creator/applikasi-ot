@@ -263,9 +263,10 @@ export default function App() {
     try {
       await fetch(gasUrl, {
         method: 'POST',
-        mode: 'no-cors',
+        mode: 'cors',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
           action: action,

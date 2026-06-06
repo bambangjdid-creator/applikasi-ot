@@ -89,10 +89,14 @@ export default function SettingsView({ users, setUsers, karyawan, setKaryawan, c
       setUsers(prev => prev.map(u => u.username === editingUsername ? item : u));
       writeLocalLog(currentUser, 'revisi', `Mengupdate kredensial / menu role user ${username}`);
       showToast('Kredensial pengguna diperbarui!');
+      // Persist update to Google Sheet
+      postDataToGoogleSheets('SAVE_USER_ROLE', item);
     } else {
       setUsers(prev => [...prev, item]);
       writeLocalLog(currentUser, 'pembuatan berkas', `Mendaftarkan hak akses menu user baru ${username}`);
       showToast('Pengguna baru berhasil diregistrasikan!');
+      // Persist new user to Google Sheet
+      postDataToGoogleSheets('SAVE_USER_ROLE', item);
     }
 
     setUsername(''); setPassword(''); setDisplayName(''); setEditingUsername(null);
