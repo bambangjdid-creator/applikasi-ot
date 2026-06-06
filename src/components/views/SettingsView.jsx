@@ -122,8 +122,11 @@ export default function SettingsView({ users, setUsers, karyawan, setKaryawan, c
   };
 
   const handleDeleteKaryawan = (id) => {
-    setKaryawan(prev => prev.filter(k => k.idKaryawan !== id));
-    showToast('Data staf lokal dibersihkan.');
+    postDataToGoogleSheets('DELETE_KARYAWAN', { idKaryawan: id }, () => {
+      setKaryawan(prev => prev.filter(k => k.idKaryawan !== id));
+      writeLocalLog(currentUser, 'penghapusan', `Menghapus data karyawan ${id}`);
+      showToast('Data staf berhasil dihapus!');
+    });
   };
 
   const handleDeleteUser = (uname) => {
@@ -131,8 +134,11 @@ export default function SettingsView({ users, setUsers, karyawan, setKaryawan, c
       showToast('Anda tidak dapat menghapus akun Anda sendiri!', 'error');
       return;
     }
-    setUsers(prev => prev.filter(u => u.username !== uname));
-    showToast('Akses akun berhasil dicabut.');
+    postDataToGoogleSheets('DELETE_USER', { username: uname }, () => {
+      setUsers(prev => prev.filter(u => u.username !== uname));
+      writeLocalLog(currentUser, 'penghapusan', `Menghapus akses user ${uname}`);
+      showToast('Akses akun berhasil dicabut!');
+    });
   };
 
   return (

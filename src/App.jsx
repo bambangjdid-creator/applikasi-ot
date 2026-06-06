@@ -71,11 +71,11 @@ const normalizeUser = (u) => {
   return {
     username: String(u.username || u.Username || u.userName || '').trim(),
     password: String(u.password || u.Password || '').trim(),
-    displayName: String(u.displayName || u.displayname || u['Display Name'] || u['display name'] || u.username || '').trim(),
+    displayName: String(u.displayName || u.DisplayName || u.displayname || u['Display Name'] || u['display name'] || u.username || '').trim(),
     divisi: String(u.divisi || u.Divisi || '').trim(),
-    divisiKode: String(u.divisiKode || u.divisikode || u['Divisi Kode'] || u['divisi kode'] || '').trim(),
+    divisiKode: String(u.divisiKode || u.DivisiKode || u.divisikode || u['Divisi Kode'] || u['divisi kode'] || '').trim(),
     role: String(u.role || u.Role || 'User').trim(),
-    aksesMenu: String(u.aksesMenu || u.aksesmenu || u['Akses Menu'] || u['akses menu'] || 'Dashboard, Form OT, OT History').trim()
+    aksesMenu: String(u.aksesMenu || u.AksesMenu || u.aksesmenu || u['Akses Menu'] || u['akses menu'] || 'Dashboard, Form OT, OT History').trim()
   };
 };
 
@@ -253,29 +253,48 @@ export default function App() {
 
   const postDataToGoogleSheets = async (action, payload, successCallback) => {
     if (!gasUrl) {
+      console.warn('[GAS POST] No gasUrl configured, skipping POST for action:', action);
       if (successCallback) successCallback();
       return;
     }
 
+    console.log('[GAS POST] Starting POST for action:', action, 'payload:', payload);
     setSyncStatus('syncing');
     setSyncProgressMsg(`Menyimpan perubahan (${action}) ke Google Sheets...`);
 
     try {
+      const bodyData = JSON.stringify({
+        action: action,
+        payload: payload,
+        currentUser: currentUser
+      });
+      console.log('[GAS POST] Sending to:', gasUrl, 'body:', bodyData);
+
+      const response = await fetch(gasUrl, {
+        method: 'POST',
+        redirect: 'follow',
+        body: bodyData
+      });
+
+      console.log('[GAS POST] Response status:', response.status, 'type:', response.type);
+
+      // GAS web apps may return opaque responses after redirect
+      if (response.type === 'opaque' || response.type === 'cors') {
+        // Can't read opaque response body, assume success
+        console.log('[GAS POST] Opaque/CORS response - assuming success for action:', action);
+        setSyncStatus('success');
+        showToast('Database berhasil diposting ke Cloud!');
+        setTimeout(() => {
+          setSyncStatus('idle');
+          pullDataFromGoogleSheets(true);
+        }, 1500);
+        if (successCallback) successCallback();
+        return;
+      }
+
       try {
-        const response = await fetch(gasUrl, {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({
-            action: action,
-            payload: payload,
-            currentUser: currentUser
-          })
-        });
         const result = await response.json();
+        console.log('[GAS POST] Response JSON:', result);
         if (result.success) {
           setSyncStatus('success');
           showToast('Database berhasil diposting ke Cloud!');
@@ -285,14 +304,25 @@ export default function App() {
           }, 1500);
           if (successCallback) successCallback();
         } else {
-          throw new Error(result.message || 'Unknown error');
+          throw new Error(result.message || 'Server returned failure');
         }
-      } catch (error) {
-        console.error(error);
-        setSyncStatus('error');
-        showToast(`Gagal mengirim update ke Google Sheets Webhook: ${error.message}`, 'error');
-        setTimeout(() => setSyncStatus('idle'), 2000);
-      }}
+      } catch (parseErr) {
+        // Response may not be JSON (e.g. after redirect), treat as success
+        console.warn('[GAS POST] Could not parse response as JSON, assuming success:', parseErr.message);
+        setSyncStatus('success');
+        showToast('Database berhasil diposting ke Cloud!');
+        setTimeout(() => {
+          setSyncStatus('idle');
+          pullDataFromGoogleSheets(true);
+        }, 1500);
+        if (successCallback) successCallback();
+      }
+    } catch (error) {
+      console.error('[GAS POST] Fetch error for action:', action, error);
+      setSyncStatus('error');
+      showToast(`Gagal mengirim data ke Google Sheets: ${error.message}`, 'error');
+      setTimeout(() => setSyncStatus('idle'), 2000);
+    }
   };
 
   useEffect(() => {

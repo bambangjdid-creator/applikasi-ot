@@ -1,0 +1,260 @@
+// ID Folder tujuan di Google Drive Anda
+const TARGET_FOLDER_ID = "1yUbs02aC0PmBcUxLYDjeKRh04G8iTpvd";
+const SPREADSHEET_NAME = "Database Overtime Sistem";
+
+/**
+ * Fungsi Utama Setup: Jalankan fungsi ini sekali di Google Apps Script editor
+ * untuk membuat file Spreadsheet baru di dalam folder spesifik secara otomatis.
+ */
+function setupDatabase() {
+  try {
+    const folder = DriveApp.getFolderById(TARGET_FOLDER_ID);
+    console.log("Menghubungkan ke folder Google Drive: " + folder.getName());
+    
+    // Cari apakah spreadsheet database sudah ada di folder tersebut
+    const files = folder.getFilesByName(SPREADSHEET_NAME);
+    let ss;
+    
+    if (files.hasNext()) {
+      const existingFile = files.next();
+      ss = SpreadsheetApp.openById(existingFile.getId());
+      console.log("Database ditemukan! Menggunakan spreadsheet yang sudah ada: " + existingFile.getUrl());
+    } else {
+      // Buat file spreadsheet baru
+      const newSS = SpreadsheetApp.create(SPREADSHEET_NAME);
+      const tempFile = DriveApp.getFileById(newSS.getId());
+      
+      // Pindahkan file ke folder tujuan
+      folder.addFile(tempFile);
+      DriveApp.getRootFolder().removeFile(tempFile);
+      
+      ss = SpreadsheetApp.openById(newSS.getId());
+      console.log("Database baru sukses dibuat di folder target: " + ss.getUrl());
+    }
+
+    // 1. Buat & Atur Sheet USER_ROLE
+    let sheetUser = ss.getSheetByName("USER_ROLE") || ss.insertSheet("USER_ROLE");
+    sheetUser.clear();
+    const headersUser = ["Username", "Password", "Display Name", "Divisi", "Divisi Kode", "Role", "Akses Menu"];
+    sheetUser.getRange(1, 1, 1, headersUser.length).setValues([headersUser])
+             .setFontWeight("bold").setBackground("#D9EAD3");
+
+    // 2. Buat & Atur Sheet OVERTIME
+    let sheetOT = ss.getSheetByName("OVERTIME") || ss.insertSheet("OVERTIME");
+    sheetOT.clear();
+    const headersOT = [
+      "id doc", "tanggal pengajuan", "tanggal lembur", "area lembur", "divisi", 
+      "jenis lembur", "nama karyawan", "id karyawan", "jabatan", "jam mulai", 
+      "jam selesai", "durasi lembur", "nominal", "status document", "alasan lembur", "catatan manager"
+    ];
+    sheetOT.getRange(1, 1, 1, headersOT.length).setValues([headersOT])
+           .setFontWeight("bold").setBackground("#C9DAF8");
+
+    // 3. Buat & Atur Sheet DATA_KARYAWAN
+    let sheetKaryawan = ss.getSheetByName("DATA_KARYAWAN") || ss.insertSheet("DATA_KARYAWAN");
+    sheetKaryawan.clear();
+    const headersKaryawan = ["nik", "id karyawan", "nama karyawan", "divisi", "area kerja", "jabatan"];
+    sheetKaryawan.getRange(1, 1, 1, headersKaryawan.length).setValues([headersKaryawan])
+                 .setFontWeight("bold").setBackground("#FFF2CC");
+
+    // 4. Buat & Atur Sheet AUDIT_LOG
+    let sheetLog = ss.getSheetByName("AUDIT_LOG") || ss.insertSheet("AUDIT_LOG");
+    sheetLog.clear();
+    const headersLog = ["Timestamp", "User", "Action", "Details"];
+    sheetLog.getRange(1, 1, 1, headersLog.length).setValues([headersLog])
+            .setFontWeight("bold").setBackground("#F3F3F3");
+
+    // Hapus sheet bawaan "Sheet1" jika ada
+    const defaultSheet = ss.getSheetByName("Sheet1");
+    if (defaultSheet) {
+      ss.deleteSheet(defaultSheet);
+    }
+
+    // Isi data awal (seed data) agar database tidak kosong saat pertama digunakan
+    sheetUser.appendRow(["admin1", "123", "Budi Hartono (Admin)", "HEAD OFFICE", "HO", "Admin", "Dashboard, Form OT, OT History, Approval, Audit Log, Report, Settings"]);
+    sheetUser.appendRow(["user1", "123", "Siti Aminah (Staff)", "GUDANG PONCOL", "PCL", "User", "Dashboard, Form OT, OT History"]);
+    sheetUser.appendRow(["mgr1", "123", "Hendra Wijaya (Manager)", "GUDANG NAGOYA", "NGY", "Manager", "Dashboard, OT History, Approval, Report"]);
+    sheetUser.appendRow(["hrd1", "123", "Saskia Putri (HRD)", "HEAD OFFICE", "HO", "hrd", "Dashboard, OT History, Approval, Audit Log, Report, Settings"]);
+
+    sheetKaryawan.appendRow(["3275012301", "EMP001", "Ahmad Dani", "GUDANG NAGOYA", "GUDANG NAGOYA", "Staf Logistik"]);
+    sheetKaryawan.appendRow(["3275012302", "EMP002", "Budi Santoso", "GUDANG NAGOYA", "GUDANG NAGOYA", "Helper Gudang"]);
+    sheetKaryawan.appendRow(["3275012303", "EMP003", "Siti Aminah", "GUDANG PONCOL", "GUDANG PONCOL", "Staf Logistik"]);
+    sheetKaryawan.appendRow(["3275012304", "EMP004", "Dedi Kurniawan", "GUDANG CIRACAS", "GUDANG CIRACAS", "Driver Operasional"]);
+    sheetKaryawan.appendRow(["3275012305", "EMP005", "Eka Putri", "FINANCE", "HEAD OFFICE", "Kasir Utama"]);
+
+    sheetLog.appendRow([new Date().toISOString(), "system", "inisialisasi", "Database Berhasil Dibuat di Folder Google Drive Target."]);
+
+    console.log("Proses inisialisasi sukses! Seluruh tabel terbuat sempurna.");
+    return { success: true, url: ss.getUrl() };
+  } catch (error) {
+    console.error("Gagal melakukan setup database: " + error.toString());
+    return { success: false, error: error.toString() };
+  }
+}
+
+/**
+ * GET Webhook API: Digunakan oleh aplikasi React untuk mengambil seluruh data
+ * dari Google Sheet database ke web UI secara instan.
+ */
+function doGet(e) {
+  try {
+    const ss = getSpreadsheet();
+    if (!ss) {
+      return createJsonResponse({ success: false, message: "Database tidak ditemukan. Silakan jalankan setupDatabase() terlebih dahulu." });
+    }
+
+    const data = {
+      users: getSheetDataAsJson(ss, "USER_ROLE"),
+      overtime: getSheetDataAsJson(ss, "OVERTIME"),
+      karyawan: getSheetDataAsJson(ss, "DATA_KARYAWAN"),
+      auditLogs: getSheetDataAsJson(ss, "AUDIT_LOG")
+    };
+
+    return createJsonResponse({ success: true, data: data });
+  } catch (error) {
+    return createJsonResponse({ success: false, error: error.toString() });
+  }
+}
+
+/**
+ * POST Webhook API: Menerima pengajuan lembur baru, persetujuan manager,
+ * revisi, edit database master, dan log audit dari web app.
+ */
+function doPost(e) {
+  try {
+    const ss = getSpreadsheet();
+    if (!ss) {
+      return createJsonResponse({ success: false, message: "Spreadsheet database belum siap." });
+    }
+
+    const postData = JSON.parse(e.postData.contents);
+    const action = postData.action; // jenis aksi: 'CREATE_OT', 'UPDATE_STATUS', 'SAVE_KARYAWAN', 'SAVE_USER'
+    const payload = postData.payload;
+
+    if (action === "CREATE_OT") {
+      const sheet = ss.getSheetByName("OVERTIME");
+      // Payload berisi array of records (multi-employee)
+      payload.forEach(item => {
+        sheet.appendRow([
+          item.idDoc, item.tanggalPengajuan, item.tanggalLembur, item.areaLembur, item.divisi,
+          item.jenisLembur, item.namaKaryawan, item.idKaryawan, item.jabatan, item.jamMulai,
+          item.jamSelesai, item.durasiLembur, item.nominal, item.statusDocument, item.alasanLembur, item.catatanManager
+        ]);
+      });
+      writeLogToSheet(ss, postData.currentUser, "pembuatan berkas", "Menambahkan pengajuan dokumen lembur " + payload[0].idDoc);
+
+    } else if (action === "UPDATE_STATUS") {
+      const sheet = ss.getSheetByName("OVERTIME");
+      const rows = sheet.getDataRange().getValues();
+      const docId = payload.idDoc;
+      const newStatus = payload.statusDocument;
+      const comment = payload.catatanManager || "";
+
+      // Cari baris yang cocok dengan docId lalu ubah status & catatan manager
+      for (let i = 1; i < rows.length; i++) {
+        if (rows[i][0] === docId) {
+          sheet.getRange(i + 1, 14).setValue(newStatus); // Kolom N (status document)
+          sheet.getRange(i + 1, 16).setValue(comment);   // Kolom P (catatan manager)
+        }
+      }
+      writeLogToSheet(ss, postData.currentUser, "mutasi status persetujuan", "Mengubah status " + docId + " menjadi " + newStatus.toUpperCase());
+
+    } else if (action === "SAVE_KARYAWAN") {
+      const sheet = ss.getSheetByName("DATA_KARYAWAN");
+      const rows = sheet.getDataRange().getValues();
+      const idKaryawan = payload.idKaryawan;
+      let foundIndex = -1;
+
+      for (let i = 1; i < rows.length; i++) {
+        if (rows[i][1] === idKaryawan) {
+          foundIndex = i + 1;
+          break;
+        }
+      }
+
+      const rowValues = [payload.nik, payload.idKaryawan, payload.namaKaryawan, payload.divisi, payload.areaKerja, payload.jabatan];
+      if (foundIndex !== -1) {
+        sheet.getRange(foundIndex, 1, 1, rowValues.length).setValues([rowValues]);
+        writeLogToSheet(ss, postData.currentUser, "revisi", "Mengubah data karyawan " + payload.namaKaryawan);
+      } else {
+        sheet.appendRow(rowValues);
+        writeLogToSheet(ss, postData.currentUser, "pembuatan berkas", "Mendaftarkan karyawan baru " + payload.namaKaryawan);
+      }
+    }
+
+    return createJsonResponse({ success: true, message: "Aksi " + action + " sukses disimpan ke Google Sheets." });
+  } catch (error) {
+    return createJsonResponse({ success: false, error: error.toString() });
+  }
+}
+
+/**
+ * Mengambil referensi Spreadsheet dari folder target
+ */
+function getSpreadsheet() {
+  const folder = DriveApp.getFolderById(TARGET_FOLDER_ID);
+  const files = folder.getFilesByName(SPREADSHEET_NAME);
+  if (files.hasNext()) {
+    return SpreadsheetApp.openById(files.next().getId());
+  }
+  return null;
+}
+
+/**
+ * Membaca data sheet dan mengkonversinya menjadi Array of JSON Objects
+ */
+function getSheetDataAsJson(ss, sheetName) {
+  const sheet = ss.getSheetByName(sheetName);
+  if (!sheet) return [];
+  
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return [];
+
+  const headers = data[0];
+  const jsonResult = [];
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const obj = {};
+    for (let j = 0; j < headers.length; j++) {
+      // Ubah nama header ke format CamelCase/SnakeCase yang sesuai jika diperlukan
+      let key = headers[j].toString().trim();
+      // Khusus untuk nama kolom dengan spasi seperti "id doc" diubah ke "idDoc"
+      if (key === "id doc") key = "idDoc";
+      else if (key === "tanggal pengajuan") key = "tanggalPengajuan";
+      else if (key === "tanggal lembur") key = "tanggalLembur";
+      else if (key === "area lembur") key = "areaLembur";
+      else if (key === "jenis lembur") key = "jenisLembur";
+      else if (key === "nama karyawan") key = "namaKaryawan";
+      else if (key === "id karyawan") key = "idKaryawan";
+      else if (key === "jam mulai") key = "jamMulai";
+      else if (key === "jam selesai") key = "jamSelesai";
+      else if (key === "durasi lembur") key = "durasiLembur";
+      else if (key === "status document") key = "statusDocument";
+      else if (key === "alasan lembur") key = "alasanLembur";
+      else if (key === "catatan manager") key = "catatanManager";
+      
+      obj[key] = row[j];
+    }
+    jsonResult.push(obj);
+  }
+  return jsonResult;
+}
+
+/**
+ * Menulis log kejadian ke tab sheet AUDIT_LOG secara otomatis
+ */
+function writeLogToSheet(ss, user, action, details) {
+  const sheet = ss.getSheetByName("AUDIT_LOG");
+  const timestamp = new Date().toISOString().replace("T", " ").substring(0, 19);
+  const userStr = user ? user.username : "system";
+  sheet.appendRow([timestamp, userStr, action, details]);
+}
+
+/**
+ * Helper pembentuk response JSON aman untuk Web App CORS
+ */
+function createJsonResponse(output) {
+  return ContentService.createTextOutput(JSON.stringify(output))
+    .setMimeType(ContentService.MimeType.JSON);
+}
